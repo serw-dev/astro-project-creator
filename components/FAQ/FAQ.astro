@@ -1,0 +1,147 @@
+---
+interface FAQItem {
+    question: string;
+    answer: string;
+}
+
+const faqItems: FAQItem[] = [
+    {
+        question: "What is Tailwind CSS?",
+        answer: "Tailwind CSS is a utility-first CSS framework that allows you to build custom designs quickly by composing utility classes."
+    },
+    {
+        question: "How do I install Tailwind CSS?",
+        answer: "You can install Tailwind CSS via npm by running 'npm install tailwindcss' and then initializing it with 'npx tailwindcss init'."
+    },
+    {
+        question: "Is Tailwind CSS responsive?",
+        answer: "Yes, Tailwind CSS provides responsive utility classes that make it easy to build responsive layouts and components."
+    }
+];
+---
+
+<div class="mx-auto mt-8 max-w-2xl" data-faq-container>
+    <h2 class="mb-6 text-3xl font-bold">Frequently Asked Questions</h2>
+
+    <div class="space-y-4">
+        {
+            faqItems.map((item, index) => (
+                <div class="border-b border-gray-200">
+                    <button
+                        data-faq-trigger
+                        class="faq-trigger flex w-full items-center justify-between py-5 text-left"
+                        aria-expanded="false"
+                    >
+                        <span class="text-lg font-semibold">{item.question}</span>
+                        <svg
+                            class="h-5 w-5 transform text-gray-500 transition-transform duration-200"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div data-faq-content class="faq-content hidden overflow-hidden">
+                        <p class="p-5">{item.answer}</p>
+                    </div>
+                </div>
+            ))
+        }
+    </div>
+</div>
+
+<style>
+    @keyframes slideDown {
+        from {
+            max-height: 0;
+        }
+        to {
+            max-height: 200px;
+        }
+    }
+    @keyframes slideUp {
+        from {
+            max-height: 200px;
+        }
+        to {
+            max-height: 0;
+        }
+    }
+    [data-faq-content].open {
+        animation: slideDown 0.3s ease-out forwards;
+    }
+
+    [data-faq-content].closing {
+        animation: slideUp 0.3s ease-out forwards;
+    }
+</style>
+
+<script>
+    interface FAQItem {
+        trigger: HTMLButtonElement;
+        content: HTMLDivElement;
+    }
+
+    class FAQ {
+        private items: FAQItem[];
+        private openIndex: number | null = null;
+
+        constructor(container: HTMLElement) {
+            this.items = Array.from(container.querySelectorAll("[data-faq-trigger]")).map((trigger) => ({
+                trigger: trigger as HTMLButtonElement,
+                content: trigger.nextElementSibling as HTMLDivElement
+            }));
+
+            this.addEventListeners();
+        }
+
+        private addEventListeners(): void {
+            this.items.forEach((item, index) => {
+                item.trigger.addEventListener("click", () => this.toggleItem(index));
+            });
+        }
+
+        private toggleItem(index: number): void {
+            if (this.openIndex === index) {
+                this.closeItem(index);
+            } else {
+                if (this.openIndex !== null) {
+                    this.closeItem(this.openIndex);
+                }
+                this.openItem(index);
+            }
+        }
+
+        private openItem(index: number): void {
+            const item = this.items[index];
+            item.content.classList.remove("hidden");
+            item.content.classList.add("open");
+            item.trigger.setAttribute("aria-expanded", "true");
+            item.trigger.querySelector("svg")?.classList.add("rotate-180");
+            this.openIndex = index;
+        }
+
+        private closeItem(index: number): void {
+            const item = this.items[index];
+            item.content.classList.remove("open");
+            item.content.classList.add("closing");
+            item.trigger.setAttribute("aria-expanded", "false");
+            item.trigger.querySelector("svg")?.classList.remove("rotate-180");
+
+            setTimeout(() => {
+                item.content.classList.remove("closing");
+                item.content.classList.add("hidden");
+            }, 300);
+
+            this.openIndex = null;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.querySelector("[data-faq-container]");
+        if (container) {
+            new FAQ(container as HTMLElement);
+        }
+    });
+</script>

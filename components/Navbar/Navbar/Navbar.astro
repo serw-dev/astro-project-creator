@@ -1,0 +1,78 @@
+---
+import { Image } from "astro:assets";
+import logo from "@assets/logo.svg";
+import MobileNavbar from "./MobileNavbar.astro";
+import DesktopNavbar from "./DesktopNavbar.astro";
+
+interface Props {
+    class?: string;
+    enableContactLink?: boolean;
+}
+
+const { class: className, enableContactLink = true } = Astro.props;
+
+export interface LinkType {
+    linkTargetName: string;
+    linkTo: string;
+    acessibleName: string;
+    isMobileOnly?: boolean;
+    isLinkToSection?: boolean;
+    isOutsideLink?: boolean;
+    isButtonTypeLink?: boolean;
+}
+
+const links = [
+    { linkTargetName: "Home", linkTo: "/", acessibleName: "home page", isMobileOnly: true },
+    { linkTargetName: "About", linkTo: "/about", acessibleName: "about me page" },
+    { linkTargetName: "Work", linkTo: "/work", acessibleName: "my work page" },
+    { linkTargetName: "Process", linkTo: "/process", acessibleName: "process page" },
+    ...(enableContactLink
+        ? [
+              {
+                  linkTargetName: "Contact",
+                  linkTo: "#contact",
+                  acessibleName: "contact form footer",
+                  isLinkToSection: true
+              }
+          ]
+        : []),
+    {
+        linkTargetName: "Book a call",
+        linkTo: "https://calendly.com/aleksandrapekala/design-inquiry",
+        isOutsideLink: true,
+        isButtonTypeLink: true
+    }
+] as LinkType[];
+---
+
+<nav
+    class:list={[
+        "px-default py-3 flex flex-row justify-between z-20",
+        "h-[var(--navbar-height-xs)]",
+        "sm:h-[var(--navbar-height-sm)]",
+        "lg:h-[var(--navbar-height-lg)]",
+        className
+    ]}
+>
+    <div class="flex basis-1/2 items-center">
+        <a href="/" aria-label="go home link">
+            <Image
+                src={logo}
+                alt="pekala design logo"
+                width={156}
+                height={91}
+                class:list={[
+                    "h-[50px] w-[86px]",
+                    "sm:h-[91px] sm:w-[156px]",
+                    "landscape:h-[50px] landscape:w-[86px]",
+                    "lg:landscape:h-[91px] lg:landscape:w-[156px]"
+                ]}
+                loading="eager"
+            />
+        </a>
+    </div>
+    <div class="basis-1/2 self-center">
+        <MobileNavbar class="lg:hidden" links={links} />
+        <DesktopNavbar class="hidden lg:flex" links={links} />
+    </div>
+</nav>

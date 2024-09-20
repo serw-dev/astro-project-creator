@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .text-page {
+        color: rgb(0, 0, 0);
+        font-family: "Suisse", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .bg-page {
+        background-color: white;
+    }
+}
+
+
+@layer components {
+    .btn-primary {
+        @apply rounded-3xl border-2 px-6 py-3;
+    }
+
+    .px-default {
+        @apply px-6 sm:px-10 lg:px-16;
+    }
+}

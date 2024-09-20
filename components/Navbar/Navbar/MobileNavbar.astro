@@ -1,0 +1,137 @@
+---
+import logo from "@assets/logo-white.svg";
+import { Image } from "astro:assets";
+import type { LinkType } from "./Navbar.astro";
+
+interface Props {
+    class?: string;
+    links: LinkType[];
+}
+
+const { class: className, links } = Astro.props;
+---
+
+<button
+    aria-expanded="false"
+    aria-label="toggle navbar menu"
+    data-menu-button
+    class:list={["w-full text-end uppercase", className]}
+>
+    Menu
+</button>
+<div
+    data-overlay
+    class:list={[
+        " fixed inset-0 z-50 hidden h-screen bg-ruby-red text-light-pink landscape:!overflow-auto"
+    ]}
+>
+    <div class:list={["flex h-svh w-screen flex-col bg-black text-white", "px-default py-3", "landscape:h-[800px]"]}>
+        <div class:list={["flex justify-between", "h-[var(--navbar-height-xs)]", "sm:h-[var(--navbar-height-sm)]"]}>
+            <a href="/" aria-label="go home link" class="self-center">
+                <Image
+                    src={logo}
+                    alt="pekala design logo"
+                    width={156}
+                    height={91}
+                    class:list={[
+                        "h-[50px] w-[86px] ",
+                        "sm:h-[91px] sm:w-[156px]",
+                        "landscape:h-[50px] landscape:w-[86px]",
+                        "lg:landscape:h-[91px] lg:landscape:w-[156px]"
+                    ]}
+                />
+            </a>
+            <button data-close-button autofocus aria-label="close navbar menu" class="landscape:text-5xl"
+                >&#10005;</button
+            >
+        </div>
+        <ul class:list={["flex flex-1 flex-col justify-around text-center"]}>
+            {
+                links.map((link) => (
+                    <li>
+                        <a
+                            href={link.linkTo}
+                            aria-label={link.acessibleName}
+                            rel={link.isOutsideLink ? "noopener noreferrer" : null}
+                            target={link.isOutsideLink ? "_blank" : "_self"}
+                            data-link-type={link.isLinkToSection ? "section" : "normal"}
+                        >
+                            {link.linkTargetName}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    const menuButton = document.querySelector("[data-menu-button]") as HTMLButtonElement;
+    const overlay = document.querySelector("[data-overlay]") as HTMLElement;
+    const closeOverlayButton = overlay.querySelector("[data-close-button]") as HTMLButtonElement;
+    const sectionLinks = overlay.querySelectorAll("a[data-link-type='section']") as NodeListOf<HTMLAnchorElement>;
+    const focusableElements = overlay.querySelectorAll("a, button") as NodeListOf<
+        HTMLAnchorElement | HTMLButtonElement
+    >;
+
+    menuButton.addEventListener("click", () => {
+        openOverlay(true);
+    });
+
+    closeOverlayButton.addEventListener("click", () => {
+        openOverlay(false);
+    });
+
+    sectionLinks.forEach((sectionLink) => {
+        sectionLink.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            const targetElementSelector = sectionLink.hash;
+            const targetElement = document.querySelector(targetElementSelector);
+
+            openOverlay(false);
+            targetElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    });
+
+    function openOverlay(isOpenOverlay: boolean) {
+        menuButton.setAttribute("aria-expanded", isOpenOverlay.toString());
+        overlay.classList.toggle("hidden", !isOpenOverlay);
+        document.body.classList.toggle("overflow-hidden", isOpenOverlay);
+        trapFocus(isOpenOverlay);
+    }
+
+    function trapFocus(isTrapSwitched: boolean) {
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+        firstFocusable.focus();
+
+        const handleTrapFocusKeys = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case "Escape":
+                    openOverlay(false);
+                    break;
+                case "Tab":
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            e.preventDefault();
+                            lastFocusable.focus();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            e.preventDefault();
+                            firstFocusable.focus();
+                        }
+                    }
+                default:
+                    break;
+            }
+        };
+
+        if (isTrapSwitched) {
+            overlay.addEventListener("keydown", handleTrapFocusKeys);
+        } else {
+            overlay.removeEventListener("keydown", handleTrapFocusKeys);
+        }
+    }
+</script>
