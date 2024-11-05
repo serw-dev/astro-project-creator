@@ -31,3 +31,27 @@
 8. (optional) add motion ```npm install motion```
 9. create main.css file with tailwind data like exmaple (main_EXAMPLE.css)
 10. create baselayout like exmaple (BaseLayout_EXAMPLE.astro)
+
+---
+# github account change:
+
+1. When cloning repositories:
+    - Use the appropriate directory for each account
+    
+    Dla account 1 korzystasz tak
+    
+    - Modify the clone URL: `git@github.com:<username>/<repo>.git
+    
+    Dla account 2 korzystasz tak:
+    
+    - Modify the clone URL:
+    From: `git@github.com:username/<repo>.git`
+    To: `git@github-second:username/<repo>.git` (or account2)
+2. For existing repositories:
+    - Update the remote URL:
+        
+        ```
+        Dla account 1: git remote set-url origin git@github.com:<username>/<repo>.git
+        Dla account 2: git remote set-url origin git@github-second:<username>/<repo>.git
+        
+        ```
