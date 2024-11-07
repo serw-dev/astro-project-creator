@@ -6,7 +6,7 @@
 5. Add sitemap ```npx astro add sitemap```
 6. Add prettier plugins ```npm install --save-dev prettier prettier-plugin-astro prettier-plugin-tailwindcss```
 7. Add astro seo schema ```npm install schema-dts astro-seo-schema```
-6. add this to "compiler options" in tsconfig.json
+6. add this to tsconfig.json
 ```
     "baseUrl": ".",
     "paths": {
