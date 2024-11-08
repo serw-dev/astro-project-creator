@@ -31,6 +31,15 @@
 8. (optional) add motion ```npm install motion```
 9. create main.css file with tailwind data like exmaple (main_EXAMPLE.css)
 10. create baselayout like exmaple (BaseLayout_EXAMPLE.astro)
+---
+# Add Eslint
+You can check here https://ota-meshi.github.io/eslint-plugin-astro/user-guide/#-installation
+Steps:
+1. Install 
+```npm install --save-dev eslint eslint-plugin-astro @typescript-eslint/parser eslint-plugin-jsx-a11y```
+3. Create `eslinrc.config.js` and setup it like in this project
+4. Add this to package.json -> "scripts" `"lint": "eslint src/**/*.{js,ts,jsx,tsx,astro}"`
+
 
 ---
 # github account change:
